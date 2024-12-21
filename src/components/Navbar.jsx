@@ -1,20 +1,60 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Search, Settings, Film } from 'lucide-react';
 import { FocusableElement, FocusableGroup } from "@arrow-navigation/react";
+import { useNavigate } from "react-router-dom";
+import { Home, TrendingUp, Search, Settings } from 'lucide-react'; 
 
-const Navbar = () => {
-   return (
-    <nav
-      className="fixed left-0 top-0 h-full w-24 bg-gray-800 flex flex-col items-center py-8 focus:outline-none"
-    >
-      <FocusableGroup id="group-0">
-        <FocusableElement id="item-0-0" as="button" className="w-16 h-16 bg-red-500 focus:bg-red-600" />
-        <FocusableElement id="item-0-1" as="button" className="w-16 h-16 bg-blue-500 focus:bg-blue-600" />
-        <FocusableElement id="item-0-2" as="button" className="w-16 h-16 bg-teal-500 focus:bg-teal-600" />
-      </FocusableGroup>
-    </nav>
+export default function Navbar() {
+  const navigate = useNavigate();
+
+  return (
+    <FocusableGroup id="group-0" saveLast className="flex fixed flex-col gap-4 bg-gradient-to-r from-purple-950 p-4 items-center justify-center h-screen">
+      <FocusableElement
+        id="item-0-0"
+        as="button"
+        className="w-16 h-16 focus:bg-slate-950 flex items-center justify-center rounded-full" 
+        onKeyDown={(e) => {
+          if (e.code === "Enter") {
+            navigate(``);
+          }
+        }}
+      >
+        <Home size={24} color="white" /> 
+      </FocusableElement>
+      <FocusableElement
+        id="item-0-1"
+        as="button"
+        className="w-16 h-16 focus:bg-slate-950 flex items-center justify-center rounded-full" 
+        onKeyDown={(e) => {
+          if (e.code === "Enter") {
+            navigate(`/trending`);
+          }
+        }}
+      >
+        <TrendingUp size={24} color="white" /> 
+      </FocusableElement>
+      <FocusableElement
+        id="item-0-2"
+        as="button"
+        className="w-16 h-16 focus:bg-slate-950 flex items-center justify-center rounded-full" 
+        onKeyDown={(e) => {
+          if (e.code === "Enter") {
+            navigate(`/search`);
+          }
+        }}
+      >
+        <Search size={24} color="white" /> 
+      </FocusableElement>
+      <FocusableElement
+        id="item-0-3"
+        as="button"
+        className="w-16 h-16 focus:bg-slate-950 flex items-center justify-center rounded-full" 
+        onKeyDown={(e) => {
+          if (e.code === "Enter") {
+            navigate(`/settings`);
+          }
+        }}
+      >
+        <Settings size={24} color="white" /> 
+      </FocusableElement>
+    </FocusableGroup>
   );
-};
-
-export default Navbar;
+}

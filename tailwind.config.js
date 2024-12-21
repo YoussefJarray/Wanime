@@ -9,7 +9,11 @@ module.exports = {
     content: ["./src/**/*.{js,ts,jsx,tsx}"], 
   },
   theme: {
-    extend: {},
+    extend: {
+      aspectRatio: {
+        'card': '9 / 16',
+      },
+    }
   },
   plugins: [],
 };
