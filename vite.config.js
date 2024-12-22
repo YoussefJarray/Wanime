@@ -3,6 +3,10 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from 'tailwindcss';
 
 export default defineConfig({
+  build: {
+    outDir: 'dist',  // ensure this matches your deployment output directory
+    assetsDir: 'assets', // assets will be placed here
+  },
   plugins: [react()],
   base: "/wanime/",
   css: {
