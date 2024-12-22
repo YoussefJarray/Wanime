@@ -11,13 +11,14 @@ function Settings() {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8 text-white">Settings</h1>
 
-      <FocusableGroup id="settings-group">
+      <FocusableGroup id="settings-main-group">
         <div className="space-y-6">
           <div className="bg-gray-800 p-6 rounded-lg">
             <h2 className="text-xl font-semibold mb-4 text-white">Playback Settings</h2>
             
             <div className="space-y-4">
               <FocusableElement
+                id="autoplay-toggle"
                 className="flex items-center justify-between"
                 onClick={() => setAutoplay(!autoplay)}
               >
@@ -29,7 +30,7 @@ function Settings() {
 
               <div className="space-y-2">
                 <label className="text-gray-200">Volume</label>
-                <FocusableElement>
+                <FocusableElement id="volume-slider">
                   <input
                     type="range"
                     min="0"
@@ -46,6 +47,7 @@ function Settings() {
           <div className="bg-gray-800 p-6 rounded-lg">
             <h2 className="text-xl font-semibold mb-4 text-white">Appearance</h2>
             <FocusableElement
+              id="dark-mode-toggle"
               className="flex items-center justify-between"
               onClick={() => setDarkMode(!darkMode)}
             >
@@ -57,7 +59,7 @@ function Settings() {
           </div>
 
           <div className="mt-12 text-center text-gray-400 text-sm">
-            <p>Made with ❤️ by Your Name</p>
+            <p>Made with ❤️ by Yuki</p>
             <p className="mt-1">Powered by AniList API</p>
             <p className="mt-1">Version 1.0.0</p>
           </div>

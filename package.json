@@ -14,14 +14,18 @@
     "@arrow-navigation/react": "^2.2.0",
     "@tailwindcss/line-clamp": "^0.4.4",
     "axios": "^1.7.9",
+    "eventemitter2": "^6.4.9",
     "graphql-request": "^7.1.2",
     "lucide-react": "^0.469.0",
+    "node-html-parser": "^6.1.13",
+    "okhttp": "^1.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-player": "^2.16.0",
     "react-router-dom": "^7.0.2",
     "scroll-into-view-if-needed": "^3.1.0",
     "swiper": "^11.1.15",
+    "video-react": "^0.16.0",
     "webtorrent": "^2.5.10"
   },
   "devDependencies": {

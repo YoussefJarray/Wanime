@@ -45,7 +45,11 @@ function App() {
         <Routes>
             <Route
                 path="/watch/:id/episode/:episodeNumber"
-                element={<Episode />}
+                element={
+                    <div className="h-screen w-screen bg-slate-950">
+                        <Episode />
+                    </div>
+                }
             />
             <Route
                 path="*"

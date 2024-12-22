@@ -13,7 +13,7 @@ export default function Navbar() {
         className="w-16 h-16 focus:bg-slate-950 flex items-center justify-center rounded-full" 
         onKeyDown={(e) => {
           if (e.code === "Enter") {
-            navigate(``);
+            navigate(`/`);
           }
         }}
       >
