@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom/client';
 import React from "react";
-import App from "./App";
+import App from "./App.jsx";
 import { initArrowNavigation } from "@arrow-navigation/react";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
