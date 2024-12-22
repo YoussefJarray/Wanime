@@ -8,7 +8,6 @@ export default defineConfig({
     assetsDir: 'assets', // This should match how Vercel handles your static assets
   },
   plugins: [react()],
-  base: "/wanime/",
   css: {
     postcss: {
       plugins: [tailwindcss()],
