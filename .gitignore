@@ -1,0 +1,67 @@
+# Dependencies
+node_modules/
+npm-debug.log
+
+# Testing
+coverage/
+
+# Production
+dist/
+
+# IDE/Editor specific files
+.vscode/
+*.suo
+*.user
+*.sln
+*.csproj
+*.vspscc
+*.scc
+*.userprefs
+*.tmp
+*.hg
+*.svn
+*.git
+*.DS_Store 
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*~
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor preferences
+*.suo
+*.user
+*.sln
+*.csproj
+*.vspscc
+*.scc
+*.userprefs
+*.tmp
+*.hg
+*.svn
+*.git
+*.DS_Store 
+
+# IDE/Editor specific files
+.idea/
+.vscode/
+
+# Mac
+.DS_Store
+.localized/
+
+# Windows
+Thumbs.db
+ehthumbs.db
+*.swapfile
+*.bak
+*.tmp
+
+# Linux
+.cache/
