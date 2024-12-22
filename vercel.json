@@ -15,19 +15,8 @@
       "dest": "/index.html"
     },
     {
-      "src": "/wanime/assets/(.*)",
+      "src": "/dist/assets/(.*)",
       "dest": "/dist/assets/$1"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/dist/assets/(.*).js",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "application/javascript"
-        }
-      ]
     }
   ]
 }
