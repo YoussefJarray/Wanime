@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import Home from "./pages/Home";
-import Trending from "./pages/Trending";
-import Search from "./pages/Search";
-import Settings from "./pages/Settings";
-import AnimeDetail from "./pages/AnimeDetail";
-import Episode from "./pages/Episode";
-import Navbar from "./components/Navbar";
+import Home from "./pages/Home.jsx"; // Added .jsx extension
+import Trending from "./pages/Trending.jsx"; // Added .jsx extension
+import Search from "./pages/Search.jsx"; // Added .jsx extension
+import Settings from "./pages/Settings.jsx"; // Added .jsx extension
+import AnimeDetail from "./pages/AnimeDetail.jsx"; // Added .jsx extension
+import Episode from "./pages/Episode.jsx"; // Added .jsx extension
+import Navbar from "./components/Navbar.jsx"; // Added .jsx extension
 import { Routes, Route } from "react-router-dom";
 
 function App() {
