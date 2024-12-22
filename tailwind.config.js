@@ -4,10 +4,7 @@ module.exports = {
     './index.html',
     './src/**/*.{js,jsx,ts,tsx}',
   ],
-  purge: {
-    enabled: true, 
-    content: ["./src/**/*.{js,ts,jsx,tsx}"], 
-  },
+  
   theme: {
     extend: {
       aspectRatio: {
