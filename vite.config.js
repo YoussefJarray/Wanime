@@ -4,8 +4,8 @@ import tailwindcss from 'tailwindcss';
 
 export default defineConfig({
   build: {
-    outDir: 'dist',  // ensure this matches your deployment output directory
-    assetsDir: 'assets', // assets will be placed here
+    outDir: 'dist', // Ensure this is where you want your build output
+    assetsDir: 'assets', // This should match how Vercel handles your static assets
   },
   plugins: [react()],
   base: "/wanime/",

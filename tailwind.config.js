@@ -1,8 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}", 
+    './index.html',
+    './src/**/*.{js,jsx,ts,tsx}',
   ],
   purge: {
     enabled: true, 
@@ -15,6 +15,8 @@ module.exports = {
       },
     }
   },
-  plugins: [require('@vidstack/react/tailwind.cjs')
+  plugins: [
+    require('tailwindcss'),
+    require('autoprefixer'),
   ],
 };
