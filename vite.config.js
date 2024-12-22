@@ -4,6 +4,7 @@ import tailwindcss from 'tailwindcss';
 
 export default defineConfig({
   plugins: [react()],
+  base: "/wanime/",
   css: {
     postcss: {
       plugins: [tailwindcss()],
