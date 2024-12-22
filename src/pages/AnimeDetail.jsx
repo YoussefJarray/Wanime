@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getAnimeDetails } from '../api/anilist';
+import { getAnimeById } from '../api/Anime-API';
 import { FocusableElement, FocusableGroup } from '@arrow-navigation/react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, A11y } from 'swiper/modules';
@@ -18,8 +18,21 @@ function AnimeDetail() {
   useEffect(() => {
     const fetchAnimeDetails = async () => {
       try {
-        const data = await getAnimeDetails(id);
-        setAnime(data);
+        const data = await getAnimeById(id);
+        setAnime({
+          title: {
+            romaji: data.info.name,
+            english: data.info.name
+          },
+          description: data.info.description || 'No description available.',
+          coverImage: {
+            large: data.info.img
+          },
+          genres: data.moreInfo?.genres || [],
+          episodes: data.info.episodes?.eps || 0, // Access eps property
+          status: data.info.status || 'Unknown',
+          category: data.info.category
+        });
         setLoading(false);
       } catch (err) {
         setError('Failed to load anime details');
@@ -117,7 +130,7 @@ function AnimeDetail() {
                 </FocusableGroup>
               ))}
             </div>
-            <p className="text-lg">Episodes: {anime.episodes} • Status: {anime.status}</p>
+            <p className="text-lg">Episodes: {anime.episodes} • Status: {anime.status} • Category: {anime.category}</p>
           </div>
 
           {/* Episodes Swiper */}
@@ -131,7 +144,7 @@ function AnimeDetail() {
                 navigation
                 className="w-full"
               >
-                {anime.episodes &&
+                {anime.episodes > 0 &&
                   Array.from({ length: anime.episodes }).map((_, index) => {
                     const episodeNumber = index + 1;
                     return (

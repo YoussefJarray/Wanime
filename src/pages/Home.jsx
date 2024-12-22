@@ -1,46 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAiringAnime, getTrendingAnime } from '../api/anilist';
+import { getLatestEpisodes, getMostPopularAnimes } from '../api/Anime-API'; // Updated to use getMostPopularAnimes
 import Slider from '../components/Slider';
 
 const AiringInfo = ({ anime }) => {
-  const formatTimeUntilAiring = (seconds) => {
-    const days = Math.floor(seconds / (24 * 3600));
-    seconds %= 24 * 3600;
-    const hours = Math.floor(seconds / 3600);
-    seconds %= 3600;
-    const minutes = Math.floor(seconds / 60);
-    
-    return `${days > 0 ? `${days}d ` : ''}${hours > 0 ? `${hours}h ` : ''}${minutes}m`;
-  };
-
-  return anime.nextAiringEpisode ? (
+  return (
     <div className="space-y-1">
       <p className="text-sm text-gray-300">
-        Episode {anime.nextAiringEpisode.episode}
+        Episodes: {anime.episodes.eps}
       </p>
       <p className="text-sm text-purple-300">
-        Airs in: {formatTimeUntilAiring(anime.nextAiringEpisode.timeUntilAiring)}
+        {anime.episodes.sub ? 'Sub' : ''} {anime.episodes.dub ? 'Dub' : ''}
       </p>
     </div>
-  ) : (
-    <p className="text-sm text-gray-400">No upcoming episodes</p>
   );
 };
 
 const TrendingInfo = ({ anime }) => (
   <div className="space-y-1">
     <p className="text-sm text-purple-300">
-      Score: {anime.averageScore}%
+      {anime.rated}
     </p>
     <p className="text-sm text-gray-300 truncate">
-      {anime.genres.slice(0, 2).join(', ')}
+      {anime.duration}
     </p>
   </div>
 );
 
 function Home() {
-  const [airingAnime, setAiringAnime] = useState([]);
+  const [latestEpisodes, setLatestEpisodes] = useState([]);
   const [trendingAnime, setTrendingAnime] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -48,11 +36,11 @@ function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [airingData, trendingData] = await Promise.all([
-          getAiringAnime(),
-          getTrendingAnime()
+        const [latestData, trendingData] = await Promise.all([
+          getLatestEpisodes(),
+          getMostPopularAnimes() // Updated to fetch most popular animes
         ]);
-        setAiringAnime(airingData);
+        setLatestEpisodes(latestData);
         setTrendingAnime(trendingData);
       } catch (err) {
         setError('Failed to fetch anime data. Please try again later.');
@@ -66,27 +54,37 @@ function Home() {
   }, []);
 
   return (
-    <div className="container mx-auto px-4 pb-12">
+    <div className="container mx-auto p-8">
       {loading ? (
         <p className="text-lg text-center text-white">Loading...</p>
       ) : error ? (
         <p className="text-red-500 text-center">{error}</p>
       ) : (
         <>
-          {airingAnime.length > 0 && (
+          {latestEpisodes && latestEpisodes.length > 0 && (
             <div className="mb-12">
-              <h2 className="text-3xl font-bold mb-6 text-white">Currently Airing</h2>
+              <h2 className="text-3xl font-bold mb-6 text-white">Latest Episodes</h2>
               <div className="w-full">
-                <Slider animes={airingAnime} groupId="airing-anime" />
+                <Slider animes={latestEpisodes.map(anime => ({
+                  id: anime.id,
+                  title: { romaji: anime.name },
+                  coverImage: { large: anime.img },
+                  ...anime
+                }))} groupId="latest-episodes" />
               </div>
             </div>
           )}
 
-          {trendingAnime.length > 0 && (
+          {trendingAnime && trendingAnime.length > 0 && (
             <div className="mb-12">
               <h2 className="text-3xl font-bold mb-6 text-white">Trending Now</h2>
               <div className="w-full">
-                <Slider animes={trendingAnime} groupId="trending-anime" />
+                <Slider animes={trendingAnime.map(anime => ({
+                  id: anime.id,
+                  title: { romaji: anime.name },
+                  coverImage: { large: anime.img },
+                  ...anime
+                }))} groupId="trending-anime" />
               </div>
             </div>
           )}

@@ -1,73 +1,67 @@
-// pages/Trending.jsx
 import React, { useState, useEffect } from 'react';
-import { getGenres, getTrendingAnime } from '../api/anilist';
 import Slider from '../components/Slider';
-import { FocusableElement, FocusableGroup } from '@arrow-navigation/react';
+import { getAnimeByCategory } from '../api/Anime-API'; // Importing the API function
 
-function Trending() {
-  const [genres, setGenres] = useState([]);
-  const [genreAnime, setGenreAnime] = useState({});
+const genres = ['tv', 'movie', 'most-popular', 'top-airing', 'events']; // Kebab-case genres
+
+const TrendingPage = () => {
+  const [genreAnimes, setGenreAnimes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchGenres = async () => {
+    const fetchGenreData = async () => {
       try {
-        const genreList = await getGenres();
-        setGenres(genreList);
+        setLoading(true);
+        const fetchedGenres = await Promise.all(
+          genres.map(async (genre) => {
+            const data = await getAnimeByCategory(genre, 1);
+            return { genre, animes: data.animes };
+          })
+        );
+        setGenreAnimes(fetchedGenres);
       } catch (err) {
-        setError('Failed to fetch genres');
-        console.error(err);
-      }
-    };
-    fetchGenres();
-  }, []);
-
-  useEffect(() => {
-    const fetchAnimeForGenres = async () => {
-      setLoading(true);
-      try {
-        const animeByGenre = {};
-        for (const genre of genres) {
-          const anime = await getTrendingAnime(1, 10, genre);
-          if (anime.length > 0) {
-            animeByGenre[genre] = anime;
-          }
-        }
-        setGenreAnime(animeByGenre);
-      } catch (err) {
-        setError('Failed to fetch anime');
-        console.error(err);
+        setError('Failed to fetch genre animes. Please try again later.');
+        console.error('Error fetching genre animes:', err);
       } finally {
         setLoading(false);
       }
     };
 
-    if (genres.length > 0) {
-      fetchAnimeForGenres();
-    }
-  }, [genres]);
+    fetchGenreData();
+  }, []);
 
   return (
-    <div className="container mx-auto px-4">
-      <h1 className="text-3xl font-bold mb-6 text-white">Trending Anime</h1>
-
+    <div className="container mx-auto p-8">
       {loading ? (
-        <div className="text-white">Loading...</div>
+        <p className="text-lg text-center text-white">Loading...</p>
       ) : error ? (
-        <div className="text-red-500">{error}</div>
+        <p className="text-red-500 text-center">{error}</p>
       ) : (
-        <div className="space-y-8">
-          {Object.entries(genreAnime).map(([genre, animes]) => (
-            <div key={genre}>
-              <h2 className="text-2xl font-semibold mb-4 text-white">{genre}</h2>
-              <Slider animes={animes} groupId={`slider-${genre}`} />
+        <>
+          <h1 className="text-3xl font-bold mb-6 text-white">Browse by Genres</h1>
+          {genreAnimes.map(({ genre, animes }) => (
+            <div key={genre} className="mb-12">
+              <h2 className="text-2xl font-bold mb-4 text-white capitalize">{genre}</h2>
+              {animes && animes.length > 0 ? (
+                <Slider
+                  animes={animes.map((anime) => ({
+                    id: anime.id,
+                    title: { romaji: anime.name },
+                    coverImage: { large: anime.img },
+                    ...anime,
+                  }))}
+                  groupId={`slider-${genre}`}
+                />
+              ) : (
+                <p className="text-gray-400">No animes found for this genre.</p>
+              )}
             </div>
           ))}
-        </div>
+        </>
       )}
     </div>
   );
-}
+};
 
-export default Trending;
+export default TrendingPage;

@@ -1,12 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FocusableElement, FocusableGroup } from '@arrow-navigation/react';
 import { useNavigate } from 'react-router-dom';
-import { searchAnimeByName } from '../api/anilist';
+import { searchAnime } from '../api/Anime-API';
 import Slider from '../components/Slider';
 
 function Search() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState({
+    animes: [],
+    mostPopularAnimes: [],
+    currentPage: 1,
+    hasNextPage: false,
+    totalPages: 1,
+    genres: []
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -40,14 +47,21 @@ function Search() {
   useEffect(() => {
     const performSearch = async () => {
       if (!searchTerm.trim()) {
-        setSearchResults([]);
+        setSearchResults({
+          animes: [],
+          mostPopularAnimes: [],
+          currentPage: 1,
+          hasNextPage: false,
+          totalPages: 1,
+          genres: []
+        });
         return;
       }
 
       setLoading(true);
       try {
-        const results = await searchAnimeByName(searchTerm.trim());
-        setSearchResults(results.media);
+        const results = await searchAnime(searchTerm.trim());
+        setSearchResults(results);
       } catch (err) {
         setError('Failed to search anime. Please try again.');
         console.error('Search error:', err);
@@ -104,11 +118,35 @@ function Search() {
         <p className="text-lg text-center text-white">Searching...</p>
       ) : error ? (
         <p className="text-red-500 text-center">{error}</p>
-      ) : searchResults.length > 0 ? (
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold mb-4 text-white">Search Results</h2>
-          <Slider animes={searchResults} groupId="search-results-group" />
-        </div>
+      ) : searchResults.animes.length > 0 ? (
+        <>
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold mb-4 text-white">Search Results</h2>
+            <Slider 
+              animes={searchResults.animes.map(anime => ({
+                id: anime.id,
+                title: { romaji: anime.name },
+                coverImage: { large: anime.img },
+                ...anime
+              }))} 
+              groupId="search-results-group" 
+            />
+          </div>
+          {searchResults.mostPopularAnimes.length > 0 && (
+            <div className="mt-8">
+              <h2 className="text-2xl font-bold mb-4 text-white">Most Popular</h2>
+              <Slider 
+                animes={searchResults.mostPopularAnimes.map(anime => ({
+                  id: anime.id,
+                  title: { romaji: anime.name },
+                  coverImage: { large: anime.img },
+                  ...anime
+                }))} 
+                groupId="popular-results-group" 
+              />
+            </div>
+          )}
+        </>
       ) : searchTerm && (
         <p className="text-lg text-center text-white">No results found</p>
       )}
