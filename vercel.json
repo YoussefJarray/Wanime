@@ -4,7 +4,11 @@
   },
   "rewrites": [
     {
-      "source": "(.*)",
+      "source": "/api/:path*",
+      "destination": "https://api-anime-rouge.vercel.app/:path*"
+    },
+    {
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
