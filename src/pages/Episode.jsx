@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getEpisodeSources, getAnimeEpisodes } from "../api/Anime-API";
-import ReactPlayer from 'react-player';
+import { TVPlayer } from 'react-tv-player'; // Changed to react-tv-player
 import { FocusableElement, FocusableGroup } from '@arrow-navigation/react';
 
 function Episode() {
@@ -10,11 +10,9 @@ function Episode() {
   const [subtitleTracks, setSubtitleTracks] = useState([]);
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isDubbed, setIsDubbed] = useState(false);
   const [logs, setLogs] = useState([]);
   const [episodeId, setEpisodeId] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [currentSubtitle, setCurrentSubtitle] = useState(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [showControls, setShowControls] = useState(true);
   const playerRef = useRef(null);
@@ -23,22 +21,6 @@ function Episode() {
 
   const addLog = (message) => {
     setLogs(prev => [...prev, `${new Date().toLocaleTimeString()}: ${message}`]);
-  };
-
-  const handleSeek = (seconds) => {
-    if (playerRef.current) {
-      const player = playerRef.current.getInternalPlayer();
-      const currentTime = player.getCurrentTime();
-      player.seekTo(currentTime + seconds);
-    }
-  };
-
-  const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
-  };
-
-  const handleSubtitleChange = (track) => {
-    setCurrentSubtitle(track);
   };
 
   const resetControlsTimeout = () => {
@@ -101,14 +83,13 @@ function Episode() {
           
           if (sourceData.tracks && sourceData.tracks.length > 0) {
             const formattedTracks = sourceData.tracks.map(track => ({
-              kind: 'subtitles',
+              kind: track.kind || 'subtitles',
               src: track.file,
               srcLang: track.label?.split(' ')[0]?.toLowerCase() || 'en',
               label: track.label,
               default: track.default || false
             }));
             setSubtitleTracks(formattedTracks);
-            setCurrentSubtitle(formattedTracks.find(track => track.default) || formattedTracks[0]);
             addLog(`Loaded ${formattedTracks.length} subtitle tracks`);
           }
         } else {
@@ -152,44 +133,27 @@ function Episode() {
     );
   }
 
+  // Find the English track
+  const englishTrack = subtitleTracks.find(track => track.label?.toLowerCase() === 'english');
+
   return (
     <div className="fixed inset-0 bg-black overflow-scroll">
       {videoSource && (
         <FocusableGroup id="video-player-container" orientation="vertical" >
           <div className="w-full h-full relative " onMouseMove={resetControlsTimeout}>
-            <ReactPlayer
+            <TVPlayer
               ref={playerRef}
               url={videoSource.url}
-              width="100%"
-              height="100%"
-              playing={isPlaying}
-              controls={showControls}
+              autoPlay={true}
               config={{
                 file: {
                   attributes: {
-                    crossOrigin: "anonymous"
+                    crossOrigin: "true",
                   },
-                  tracks: subtitleTracks,
-                  forceVideo: true,
-                  forceAudio: true
-                }
+                  tracks: subtitleTracks.length > 0 ? subtitleTracks : englishTrack ? [englishTrack] : [],
+                },
               }}
             />
-            
-            {/* Back button - Top Left */}
-            <div className={`absolute top-4 left-4 z-50 transition-opacity duration-300 
-              ${showControls ? 'opacity-100' : 'opacity-0'}`}>
-              <FocusableElement
-                id={`back-button-${episodeId}`}
-                onClick={() => navigate(-1)}
-                className="px-6 py-3 bg-white/10 backdrop-blur-sm text-white rounded-lg
-                  hover:bg-white/20 focus:ring-2 focus:ring-purple-500
-                  transition-all duration-200 shadow-lg"
-                onFocus={() => setShowControls(true)}
-              >
-                Back
-              </FocusableElement>
-            </div>
 
           </div>
         </FocusableGroup>
