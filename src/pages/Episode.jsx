@@ -134,7 +134,7 @@ function Episode() {
   }
 
   // Find the English track
-  const englishTrack = subtitleTracks.find(track => track.label?.toLowerCase() === 'english');
+  const englishTrack = subtitleTracks.find(track => track.label === 'English');
 
   return (
     <div className="fixed inset-0 bg-black overflow-scroll">
