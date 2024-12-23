@@ -1,4 +1,5 @@
 const BASE_URL = "/api/aniwatch"; // Use the Vite proxy for clean API routing
+//const BASE_URL = "https://api-anime-rouge.vercel.app/aniwatch"; // Use the Vite proxy for clean API routing
 
 const fetchWithCORS = async (url, options = {}) => {
   try {
@@ -38,8 +39,33 @@ const mapAnimeData = (anime) => ({
   rated: anime.rated,
 });
 
+// Updated mapping functions for different anime categories
+const mapSpotlightAnimeData = (anime) => ({
+  id: anime.id,
+  name: anime.name,
+  rank: anime.rank,
+  img: anime.img,
+  episodes: {
+    eps: anime.episodes?.eps,
+    sub: anime.episodes?.sub,
+    dub: anime.episodes?.dub,
+  },
+  duration: anime.duration,
+  quality: anime.quality,
+  category: anime.category,
+  releasedDay: anime.releasedDay,
+  description: anime.description,
+});
+
 const getAllAnimeData = async () => {
-  return await fetchWithCORS(BASE_URL);
+  const data = await fetchWithCORS(BASE_URL);
+  return {
+    latestEpisodes: data.latestEpisodes || [],
+    trendingAnimes: data.trendingAnimes || [],
+    spotlightAnimes: data.spotLightAnimes.map(mapSpotlightAnimeData) || [],
+    genres: data.genres || [],
+    featuredAnimes: data.featuredAnimes || {},
+  };
 };
 
 const searchAnime = async (keyword, page = 1) => {
@@ -48,11 +74,11 @@ const searchAnime = async (keyword, page = 1) => {
     const data = await fetchWithCORS(`${BASE_URL}/search?keyword=${encodedKeyword}&page=${page}`);
     return {
       animes: data.animes.map(mapAnimeData),
-      mostPopularAnimes: data.mostPopularAnimes.map(mapAnimeData),
+      mostPopularAnimes: data.featuredAnimes?.mostPopularAnimes.map(mapAnimeData) || [],
       currentPage: data.currentPage,
       hasNextPage: data.hasNextPage,
       totalPages: data.totalPages,
-      genres: data.genres,
+      genres: data.genres || [],
     };
   } catch (error) {
     console.error("Error searching anime:", error);
@@ -82,7 +108,7 @@ const getAnimeById = async (id) => {
       seasons: data.seasons,
       relatedAnimes: data.relatedAnimes,
       recommendedAnimes: data.recommendedAnimes,
-      mostPopularAnimes: data.mostPopularAnimes
+      mostPopularAnimes: data.featuredAnimes?.mostPopularAnimes || []
     };
   } catch (error) {
     console.error(`Error fetching anime with id "${id}":`, error);
@@ -92,14 +118,7 @@ const getAnimeById = async (id) => {
 
 const getAnimeByCategory = async (category, page = 1) => {
   try {
-    const response = await fetch(
-      `${BASE_URL}/${category}?page=${page}`
-    );
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    const data = await response.json();
-
+    const data = await fetchWithCORS(`${BASE_URL}/${category}?page=${page}`);
     return {
       animes: data.animes || [],
       top10Animes: {
@@ -119,12 +138,10 @@ const getAnimeByCategory = async (category, page = 1) => {
   }
 };
 
-
-
 const fetchGeneric = async (key) => {
   try {
     const data = await getAllAnimeData();
-    return data[key];
+    return data[key] || [];
   } catch (error) {
     console.error(`Error fetching "${key}" data:`, error);
     throw error;
@@ -136,7 +153,7 @@ const getLatestEpisodes = () => fetchGeneric("latestEpisodes");
 const getTrendingAnimes = () => fetchGeneric("trendingAnimes");
 const getSpotlightAnimes = () => fetchGeneric("spotlightAnimes");
 const getGenres = () => fetchGeneric("genres");
-const getMostPopularAnimes = () => fetchGeneric("featuredAnimes.mostPopularAnimes");
+const getMostPopularAnimes = () => fetchGeneric("featuredAnimes.mostPopularAnims");
 
 const getAnimeEpisodes = async (animeId) => {
   try {
@@ -191,6 +208,41 @@ export {
   getGenres,
   getMostPopularAnimes,
   getAnimeEpisodes,
-  //getServers,
   getEpisodeSources,
 };
+
+
+async function testAnimeAPI() {
+  try {
+    // Test getting all anime data
+    console.log("Testing getAllAnimeData...");
+    const allData = await getAllAnimeData();
+    console.log("All data retrieved:", allData);
+
+    // Test search functionality
+    console.log("\nTesting search...");
+    const searchResults = await searchAnime("Naruto");
+    console.log("Search results:", searchResults);
+
+    // Test getting anime by ID
+    console.log("\nTesting getAnimeById...");
+    const animeInfo = await getAnimeById("some-anime-id");
+    console.log("Anime info:", animeInfo);
+
+    // Test getting anime episodes
+    console.log("\nTesting getAnimeEpisodes...");
+    const episodes = await getAnimeEpisodes("some-anime-id");
+    console.log("Episodes:", episodes);
+
+    // Test getting episode sources
+    console.log("\nTesting getEpisodeSources...");
+    const sources = await getEpisodeSources("some-episode-id");
+    console.log("Sources:", sources);
+
+  } catch (error) {
+    console.error("Test failed:", error);
+  }
+}
+
+// Run the test
+testAnimeAPI();

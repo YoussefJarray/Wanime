@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getLatestEpisodes, getMostPopularAnimes } from '../api/Anime-API'; // Updated to use getMostPopularAnimes
+import { getLatestEpisodes, getMostPopularAnimes, getTrendingAnimes, getSpotlightAnimes } from '../api/Anime-API'; // Updated to include trending and spotlight
 import Slider from '../components/Slider';
 
 const AiringInfo = ({ anime }) => {
@@ -29,19 +29,25 @@ const TrendingInfo = ({ anime }) => (
 
 function Home() {
   const [latestEpisodes, setLatestEpisodes] = useState([]);
-  const [trendingAnime, setTrendingAnime] = useState([]);
+  const [popularData, setPopularData] = useState([]);
+  const [trendingData, setTrendingData] = useState([]); // Added state for trending data
+  const [spotlightData, setSpotlightData] = useState([]); // Added state for spotlight data
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [latestData, trendingData] = await Promise.all([
+        const [latestData, popularData, trendingData, spotlightData] = await Promise.all([
           getLatestEpisodes(),
-          getMostPopularAnimes() // Updated to fetch most popular animes
+          getMostPopularAnimes(),
+          getTrendingAnimes(), // Fetch trending animes
+          getSpotlightAnimes() // Fetch spotlight animes
         ]);
         setLatestEpisodes(latestData);
-        setTrendingAnime(trendingData);
+        setPopularData(popularData);
+        setTrendingData(trendingData); // Set trending data
+        setSpotlightData(spotlightData); // Set spotlight data
       } catch (err) {
         setError('Failed to fetch anime data. Please try again later.');
         console.error('Error fetching anime:', err);
@@ -75,16 +81,44 @@ function Home() {
             </div>
           )}
 
-          {trendingAnime && trendingAnime.length > 0 && (
+          {popularData && popularData.length > 0 && (
+            <div className="mb-12">
+              <h2 className="text-3xl font-bold mb-6 text-white">Popular Now</h2>
+              <div className="w-full">
+                <Slider animes={popularData.map(anime => ({
+                  id: anime.id,
+                  title: { romaji: anime.name },
+                  coverImage: { large: anime.img },
+                  ...anime
+                }))} groupId="popular-anime" />
+              </div>
+            </div>
+          )}
+
+          {trendingData && trendingData.length > 0 && (
             <div className="mb-12">
               <h2 className="text-3xl font-bold mb-6 text-white">Trending Now</h2>
               <div className="w-full">
-                <Slider animes={trendingAnime.map(anime => ({
+                <Slider animes={trendingData.map(anime => ({
                   id: anime.id,
                   title: { romaji: anime.name },
                   coverImage: { large: anime.img },
                   ...anime
                 }))} groupId="trending-anime" />
+              </div>
+            </div>
+          )}
+
+          {spotlightData && spotlightData.length > 0 && (
+            <div className="mb-12">
+              <h2 className="text-3xl font-bold mb-6 text-white">Spotlight Animes</h2>
+              <div className="w-full">
+                <Slider animes={spotlightData.map(anime => ({
+                  id: anime.id,
+                  title: { romaji: anime.name },
+                  coverImage: { large: anime.img },
+                  ...anime
+                }))} groupId="spotlight-anime" />
               </div>
             </div>
           )}
