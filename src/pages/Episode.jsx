@@ -76,9 +76,10 @@ function Episode() {
 
         addLog("Fetching video sources...");
         const sourceData = await getEpisodeSources(episode.id);
+        console.log("Source Data:", sourceData); // Log the response from getEpisodeSources
         
         if (sourceData.sources.length > 0) {
-          setVideoSource(sourceData.sources[0]);
+          setVideoSource(sourceData.sources[0].url); // Store the source URL
           addLog(`Loaded video source`);
           
           if (sourceData.tracks && sourceData.tracks.length > 0) {
@@ -143,7 +144,7 @@ function Episode() {
           <div className="w-full h-full relative " onMouseMove={resetControlsTimeout}>
             <TVPlayer
               ref={playerRef}
-              url={videoSource.url}
+              url={videoSource} // Use the stored source URL
               autoPlay={true}
               config={{
                 file: {
