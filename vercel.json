@@ -1,22 +1,11 @@
 {
-  "version": 2,
-  "builds": [
+  "github": {
+    "silent": true
+  },
+  "rewrites": [
     {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/dist/assets/(.*)",
-      "dest": "/dist/assets/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "(.*)",
+      "destination": "/index.html"
     }
   ]
 }
