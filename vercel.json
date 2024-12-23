@@ -17,20 +17,6 @@
     {
       "src": "/dist/assets/(.*)",
       "dest": "/dist/assets/$1"
-    },
-    {
-      "src": "/dist/(.*\\.css)",
-      "headers": {
-        "Content-Type": "text/css"
-      },
-      "dest": "/dist/$1"
-    },
-    {
-      "src": "/dist/(.*\\.js)",
-      "headers": {
-        "Content-Type": "application/javascript"
-      },
-      "dest": "/dist/$1"
     }
   ]
 }
